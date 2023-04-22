@@ -192,3 +192,7 @@ network 192.168.20.0 255.255.255.0
 default-router 192.168.20.1
 dns-server 192.168.1.254
 ```
+
+
+
+Creado por [Alvaro @2023](https://github.com/Haisha10)

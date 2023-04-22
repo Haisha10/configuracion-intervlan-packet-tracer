@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Alvaro" />
+    <link rel="stylesheet" href="splendor.css">
+    <title>InterVLAN Config</title>
+  </head>
+  <body>
+    <h1>REPASO DE PROCEDIMIENTO DE CONFIGURACIÓN CISCO PACKET TRACER</h1>
+    <p>REDES Y COMUNICACIONES DE DATOS</p>
+    <h2>1. SEGURIDAD BÁSICA</h2>
+    <p>
+      Esta es la configuración de seguridad básica para los dispositivos de red
+      como los <strong>switches</strong> y <strong>los routers</strong>.
+    </p>
+    <p><code>Switch&gt;</code></p>
+    <pre><code>enable
+configure terminal
+hostname S1
+enable secret upc123
+line console 0
+password upc321
+login
+exit
+line vty 0 15
+password upc321
+login
+exit
+banner motd $ *** SOLO PERSONAL AUTORIZADO *** $
+do write
+do write memory
+do copy run start
+</code></pre>
+    <h2>2. ROUTER: SUBINTERFACES</h2>
+    <p>
+      Habilitar la <em>interfaz</em> del <strong>router</strong> que se conecte
+      con el <strong>switch</strong>
+    </p>
+    <p><code>Router(config)#</code></p>
+    <pre><code>interface G0/0
+no shutdown
+</code></pre>
+    <p>
+      Habilitar las <em>subinterfaces</em> de las <strong>VLANs</strong> para
+      que tenga <em>enlace troncal</em> con la <em>encapsulación dot1q</em> y
+      asignarles una <em>dirección IP</em>.
+    </p>
+    <blockquote>
+      <p>
+        El comando encapsulation dot1q es el protocolo que permite que el router
+        tenga enlace troncal.
+      </p>
+      <blockquote>
+        <p>
+          Un enlace troncal es un enlace punto a punto entre dos dispositivos de
+          red que lleva más de una VLAN.
+        </p>
+      </blockquote>
+    </blockquote>
+    <p><code>Router(config)#</code></p>
+    <ul>
+      <li>VLAN 10 <em>(Marketing)</em></li>
+    </ul>
+    <pre><code>interface G0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+</code></pre>
+    <ul>
+      <li>VLAN 20 <em>(Ventas)</em></li>
+    </ul>
+    <pre><code>interface G0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+</code></pre>
+    <ul>
+      <li>VLAN 99 <em>(Management &amp; Native)</em></li>
+    </ul>
+    <pre><code>interface G0/0.99
+encapsulation dot1Q 99
+ip address 192.168.99.1 255.255.255.0
+</code></pre>
+    <h2>3. SWITCH: VLANS</h2>
+    <p>
+      Habilitar las <strong>VLANs</strong> en los <strong>switches</strong> y
+      asignarles un nombre.
+    </p>
+    <p><code>Switch(config)#</code></p>
+    <pre><code>VLAN 10
+name MKT
+VLAN 20
+name VTAS
+VLAN 99
+name Management&amp;Native
+</code></pre>
+    <h2>4. SWITCH: PUERTOS VLANS</h2>
+    <p>
+      Habilitar las <strong>interfaces (puertos)</strong> donde se conectarán
+      los <strong>dispositivos finales</strong> (PC, laptop, impresora, etc.)
+      para que tenga un <em>switchport en modo de acceso</em>.
+    </p>
+    <blockquote>
+      <p>
+        El comando <code>switchport mode access</code> fuerza al puerto a
+        convertirse en un puerto de acceso para que cualquier dispositivo
+        conectado a este puerto solo pueda comunicarse con otros dispositivos
+        que esten en la misma VLAN.
+      </p>
+    </blockquote>
+    <p><code>Switch(config)#</code></p>
+    <ul>
+      <li>VLAN 10</li>
+    </ul>
+    <pre><code>interface range f0/2, f0/4, f0/6, f0/8, f0/10
+switchport mode access
+switchport access vlan 10
+</code></pre>
+    <ul>
+      <li>VLAN 20</li>
+    </ul>
+    <pre><code>interface range f0/3, f0/5, f0/7, f0/9, f0/11
+switchport mode access
+switchport access vlan 20
+</code></pre>
+    <h2>5. SWITCH: TRUNKING</h2>
+    <p>
+      Habilitar las <strong>interfaces (puertos)</strong> donde se conectarán
+      otros <strong>dispositivos de red</strong> (switch y router) para que
+      tenga un <em>switchport en modo truncal</em>.
+    </p>
+    <blockquote>
+      <p>
+        El comando <code>switchport mode trunk</code> coloca la interfaz en modo
+        de enlace troncal permanente y negocia para convertir el enlace en un
+        enlace troncal.
+      </p>
+      <blockquote>
+        <p>
+          Los puertos de enlace troncal son los enlaces entre switches que
+          admiten la transmisión de tráfico asociado a más de una VLAN.
+        </p>
+      </blockquote>
+    </blockquote>
+    <p><code>Switch(config)#</code></p>
+    <ul>
+      <li>Switch 1</li>
+    </ul>
+    <pre><code>interface range G0/1, f0/1-2
+switchport mode trunk
+switchport trunk native vlan 99
+</code></pre>
+    <ul>
+      <li>Switch 2</li>
+    </ul>
+    <pre><code>interface f0/1
+switchport mode trunk
+switchport trunk native vlan 99
+</code></pre>
+    <ul>
+      <li>Switch 3</li>
+    </ul>
+    <pre><code>interface f0/1
+switchport mode trunk
+switchport trunk native vlan 99
+</code></pre>
+    <h2>6. SWITCH: SVI</h2>
+    <p>
+      Habilitar las <strong>interfaces virtuales</strong> de las
+      <strong>VLANs</strong> y asignarles una dirección IP a los
+      <strong>switches</strong> y
+      <strong>puerta de enlace predeterminada</strong> en la
+      <strong>VLAN</strong>
+    </p>
+    <blockquote>
+      <p>
+        Una SVI es una interfaz virtual configurada en un switch multicapa, como
+        se muestra en la ilustración. Se puede crear una SVI para cualquier VLAN
+        que exista en el switch.
+        <img src="https://i.imgur.com/IxO07EM.png" alt="SVI" />
+      </p>
+    </blockquote>
+    <p><code>Switch(config)#</code></p>
+    <ul>
+      <li>Switch 1</li>
+    </ul>
+    <pre><code>interface vlan 99
+ip address 192.168.99.11 255.255.255.0
+exit
+ip default-gateway 192.168.99.1
+</code></pre>
+    <ul>
+      <li>Switch 2</li>
+    </ul>
+    <pre><code>interface vlan 99
+ip address 192.168.99.12 255.255.255.0
+exit
+ip default-gateway 192.168.99.1
+</code></pre>
+    <ul>
+      <li>Switch 3</li>
+    </ul>
+    <pre><code>interface vlan 99
+ip address 192.168.99.13 255.255.255.0
+exit
+ip default-gateway 192.168.99.1
+</code></pre>
+    <h2>7. ROUTER: DHCP</h2>
+    <p>
+      Se puede habilitar el servicio de aginación automática de IPs
+      <strong>DHCP</strong> en el <strong>router</strong>, se pueden excluir
+      rangos de direcciones para que no se asignen dentro de dicho rango y
+      tambíen puede asignar direcciones IP dependiendo de la
+      <strong>VLAN</strong>
+    </p>
+    <p><code>Router(config)#</code></p>
+    <ul>
+      <li>VLAN 10</li>
+    </ul>
+    <pre><code>ip dhcp excluded-address 192.168.10.1 192.168.10.50
+ip dhcp pool POOL-VLAN10
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+dns-server 192.168.1.254
+</code></pre>
+    <ul>
+      <li>VLAN 20</li>
+    </ul>
+    <pre><code>ip dhcp excluded-address 192.168.20.1 192.168.20.50
+ip dhcp pool POOL-VLAN20
+network 192.168.20.0 255.255.255.0
+default-router 192.168.20.1
+dns-server 192.168.1.254
+</code></pre>
+  </body>
+  <footer>
+    <p>Creado por <a href="https://github.com/Haisha10">Alvaro @2023</a></p>
+  </footer>
+</html>
