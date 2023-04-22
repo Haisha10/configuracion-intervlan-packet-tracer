@@ -4,7 +4,7 @@ REDES Y COMUNICACIONESD DE DATOS
 
 ## 1. SEGURIDAD BÁSICA
 
-Esta es la configuración de seguridad básica para los dispositivos de red como los switches y los routers.
+Esta es la configuración de seguridad básica para los dispositivos de red como los **switches** y **los routers**.
 
 ```
 enable
