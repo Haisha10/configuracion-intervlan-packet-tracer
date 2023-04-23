@@ -72,6 +72,14 @@ Si se usa un **switch multicapa** se puede obviar la configuración del router, 
 `MLS(config)`
 
 ```
+ip routing
+VLAN 10
+name MKT
+VLAN 20
+name VTAS
+VLAN 99
+name Management&Native
+exit
 interface G1/0/11
 switchport mode trunk
 switchport trunk native vlan 99

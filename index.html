@@ -106,10 +106,18 @@
     </p>
     <p><code>MLS(config)</code></p>
     <pre><code>
+      ip routing
+      VLAN 10
+      name MKT
+      VLAN 20
+      name VTAS
+      VLAN 99
+      name Management&amp;Native
+      exit
       interface G1/0/11
       switchport mode trunk
       switchport trunk native vlan 99
-
+      
       switchport trunk encapsulation dot1q
     </code></pre>
     <h2>3. SWITCH: VLANS</h2>
