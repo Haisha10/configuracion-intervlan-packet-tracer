@@ -69,7 +69,7 @@ ip address 192.168.99.1 255.255.255.0
 
 Si se usa un **switch multicapa** se puede obviar la configuración del router, ya que el **switch multicapa** se encargará de *gestionar la interVLAN*. Su configuración es similar al del router. Se seleccionan los puertos que se conectarán a los **switches** y solo se les aplica el *modo de enlace truncal*, no es necesario especificar la *encapsulación dot1q* en modelos como **3560** y **2950** al ser más modernos por defecto usan *encapsulación dot1q*. Esto se puede [verficar](https://community.cisco.com/t5/switching/multilayer-switch-rejects-the-command-quot-switchport-trunk/td-p/4663969) usando el comando: `MLS# show interface G1/0/11 switchport`
 
-`MLS(config)`
+`MLS(config)#`
 
 ```
 ip routing
@@ -86,6 +86,8 @@ switchport trunk native vlan 99
 
 switchport trunk encapsulation dot1q
 ```
+
+[Más Información](https://www.comparitech.com/net-admin/inter-vlan-routing-configuration/)
 
 
 ## 3. SWITCH: VLANS
