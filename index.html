@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Alvaro" />
-    <link rel="stylesheet" href="splendor.css">
+    <link rel="stylesheet" href="splendor.css" />
     <title>InterVLAN Config</title>
   </head>
   <body>
@@ -17,32 +17,34 @@
       como los <strong>switches</strong> y <strong>los routers</strong>.
     </p>
     <p><code>Switch&gt;</code></p>
-    <pre><code>enable
-configure terminal
-hostname S1
-enable secret upc123
-line console 0
-password upc321
-login
-exit
-line vty 0 15
-password upc321
-login
-exit
-banner motd $ *** SOLO PERSONAL AUTORIZADO *** $
-do write
-do write memory
-do copy run start
-</code></pre>
+    <pre><code>
+      enable
+      configure terminal
+      hostname S1
+      enable secret upc123
+      line console 0
+      password upc321
+      login
+      exit
+      line vty 0 15
+      password upc321
+      login
+      exit
+      banner motd $ *** SOLO PERSONAL AUTORIZADO *** $
+      do write
+      do write memory
+      do copy run start
+    </code></pre>
     <h2>2. ROUTER: SUBINTERFACES</h2>
     <p>
       Habilitar la <em>interfaz</em> del <strong>router</strong> que se conecte
       con el <strong>switch</strong>
     </p>
     <p><code>Router(config)#</code></p>
-    <pre><code>interface G0/0
-no shutdown
-</code></pre>
+    <pre><code>
+      interface G0/0
+      no shutdown
+    </code></pre>
     <p>
       Habilitar las <em>subinterfaces</em> de las <strong>VLANs</strong> para
       que tenga <em>enlace troncal</em> con la <em>encapsulación dot1q</em> y
@@ -64,37 +66,66 @@ no shutdown
     <ul>
       <li>VLAN 10 <em>(Marketing)</em></li>
     </ul>
-    <pre><code>interface G0/0.10
-encapsulation dot1Q 10
-ip address 192.168.10.1 255.255.255.0
-</code></pre>
+    <pre><code>
+      interface G0/0.10
+      encapsulation dot1Q 10
+      ip address 192.168.10.1 255.255.255.0
+    </code></pre>
     <ul>
       <li>VLAN 20 <em>(Ventas)</em></li>
     </ul>
-    <pre><code>interface G0/0.20
-encapsulation dot1Q 20
-ip address 192.168.20.1 255.255.255.0
-</code></pre>
+    <pre><code>
+      interface G0/0.20
+      encapsulation dot1Q 20
+      ip address 192.168.20.1 255.255.255.0
+    </code></pre>
     <ul>
       <li>VLAN 99 <em>(Management &amp; Native)</em></li>
     </ul>
-    <pre><code>interface G0/0.99
-encapsulation dot1Q 99
-ip address 192.168.99.1 255.255.255.0
-</code></pre>
+    <pre><code>
+      interface G0/0.99
+      encapsulation dot1Q 99
+      ip address 192.168.99.1 255.255.255.0
+    </code></pre>
+    <h3>2.1 MULTILAYER SWITCH</h3>
+    <p>
+      Si se usa un <strong>switch multicapa</strong> se puede obviar la
+      configuración del router, ya que el <strong>switch multicapa</strong> se
+      encargará de <em>gestionar la interVLAN</em>. Su configuración es similar
+      al del router. Se seleccionan los puertos que se conectarán a los
+      <strong>switches</strong> y solo se les aplica el
+      <em>modo de enlace truncal</em>, no es necesario especificar la
+      <em>encapsulación dot1q</em> en modelos como <strong>3560</strong> y
+      <strong>2950</strong> al ser más modernos por defecto usan
+      <em>encapsulación dot1q</em>. <br /> Esto se puede
+      <a
+        href="https://community.cisco.com/t5/switching/multilayer-switch-rejects-the-command-quot-switchport-trunk/td-p/4663969"
+        >verficar</a
+      >
+      usando el comando: <code>MLS# show interface G1/0/11 switchport</code>
+    </p>
+    <p><code>MLS(config)</code></p>
+    <pre><code>
+      interface G1/0/11
+      switchport mode trunk
+      switchport trunk native vlan 99
+
+      switchport trunk encapsulation dot1q
+    </code></pre>
     <h2>3. SWITCH: VLANS</h2>
     <p>
       Habilitar las <strong>VLANs</strong> en los <strong>switches</strong> y
       asignarles un nombre.
     </p>
     <p><code>Switch(config)#</code></p>
-    <pre><code>VLAN 10
-name MKT
-VLAN 20
-name VTAS
-VLAN 99
-name Management&amp;Native
-</code></pre>
+    <pre><code>
+      VLAN 10
+      name MKT
+      VLAN 20
+      name VTAS
+      VLAN 99
+      name Management&amp;Native
+    </code></pre>
     <h2>4. SWITCH: PUERTOS VLANS</h2>
     <p>
       Habilitar las <strong>interfaces (puertos)</strong> donde se conectarán
@@ -113,17 +144,19 @@ name Management&amp;Native
     <ul>
       <li>VLAN 10</li>
     </ul>
-    <pre><code>interface range f0/2, f0/4, f0/6, f0/8, f0/10
-switchport mode access
-switchport access vlan 10
-</code></pre>
+    <pre><code>
+      interface range f0/2, f0/4, f0/6, f0/8, f0/10
+      switchport mode access
+      switchport access vlan 10
+    </code></pre>
     <ul>
       <li>VLAN 20</li>
     </ul>
-    <pre><code>interface range f0/3, f0/5, f0/7, f0/9, f0/11
-switchport mode access
-switchport access vlan 20
-</code></pre>
+    <pre><code>
+      interface range f0/3, f0/5, f0/7, f0/9, f0/11
+      switchport mode access
+      switchport access vlan 20
+    </code></pre>
     <h2>5. SWITCH: TRUNKING</h2>
     <p>
       Habilitar las <strong>interfaces (puertos)</strong> donde se conectarán
@@ -147,24 +180,27 @@ switchport access vlan 20
     <ul>
       <li>Switch 1</li>
     </ul>
-    <pre><code>interface range G0/1, f0/1-2
-switchport mode trunk
-switchport trunk native vlan 99
-</code></pre>
+    <pre><code>
+      interface range G0/1, f0/1-2
+      switchport mode trunk
+      switchport trunk native vlan 99
+    </code></pre>
     <ul>
       <li>Switch 2</li>
     </ul>
-    <pre><code>interface f0/1
-switchport mode trunk
-switchport trunk native vlan 99
-</code></pre>
+    <pre><code>
+      interface f0/1
+      switchport mode trunk
+      switchport trunk native vlan 99
+    </code></pre>
     <ul>
       <li>Switch 3</li>
     </ul>
-    <pre><code>interface f0/1
-switchport mode trunk
-switchport trunk native vlan 99
-</code></pre>
+    <pre><code>
+      interface f0/1
+      switchport mode trunk
+      switchport trunk native vlan 99
+    </code></pre>
     <h2>6. SWITCH: SVI</h2>
     <p>
       Habilitar las <strong>interfaces virtuales</strong> de las
@@ -185,27 +221,30 @@ switchport trunk native vlan 99
     <ul>
       <li>Switch 1</li>
     </ul>
-    <pre><code>interface vlan 99
-ip address 192.168.99.11 255.255.255.0
-exit
-ip default-gateway 192.168.99.1
-</code></pre>
+    <pre><code>
+      interface vlan 99
+      ip address 192.168.99.11 255.255.255.0
+      exit
+      ip default-gateway 192.168.99.1
+    </code></pre>
     <ul>
       <li>Switch 2</li>
     </ul>
-    <pre><code>interface vlan 99
-ip address 192.168.99.12 255.255.255.0
-exit
-ip default-gateway 192.168.99.1
-</code></pre>
+    <pre><code>
+      interface vlan 99
+      ip address 192.168.99.12 255.255.255.0
+      exit
+      ip default-gateway 192.168.99.1
+    </code></pre>
     <ul>
       <li>Switch 3</li>
     </ul>
-    <pre><code>interface vlan 99
-ip address 192.168.99.13 255.255.255.0
-exit
-ip default-gateway 192.168.99.1
-</code></pre>
+    <pre><code>
+      interface vlan 99
+      ip address 192.168.99.13 255.255.255.0
+      exit
+      ip default-gateway 192.168.99.1
+    </code></pre>
     <h2>7. ROUTER: DHCP</h2>
     <p>
       Se puede habilitar el servicio de aginación automática de IPs
@@ -218,21 +257,23 @@ ip default-gateway 192.168.99.1
     <ul>
       <li>VLAN 10</li>
     </ul>
-    <pre><code>ip dhcp excluded-address 192.168.10.1 192.168.10.50
-ip dhcp pool POOL-VLAN10
-network 192.168.10.0 255.255.255.0
-default-router 192.168.10.1
-dns-server 192.168.1.254
-</code></pre>
+    <pre><code>
+      ip dhcp excluded-address 192.168.10.1 192.168.10.50
+      ip dhcp pool POOL-VLAN10
+      network 192.168.10.0 255.255.255.0
+      default-router 192.168.10.1
+      dns-server 192.168.1.254
+    </code></pre>
     <ul>
       <li>VLAN 20</li>
     </ul>
-    <pre><code>ip dhcp excluded-address 192.168.20.1 192.168.20.50
-ip dhcp pool POOL-VLAN20
-network 192.168.20.0 255.255.255.0
-default-router 192.168.20.1
-dns-server 192.168.1.254
-</code></pre>
+    <pre><code>
+      ip dhcp excluded-address 192.168.20.1 192.168.20.50
+      ip dhcp pool POOL-VLAN20
+      network 192.168.20.0 255.255.255.0
+      default-router 192.168.20.1
+      dns-server 192.168.1.254
+    </code></pre>
   </body>
   <footer>
     <p>Creado por <a href="https://github.com/Haisha10">Alvaro @2023</a></p>
