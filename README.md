@@ -1,13 +1,14 @@
 # REPASO DE PROCEDIMIENTO DE CONFIGURACIÓN CISCO PACKET TRACER
-REDES Y COMUNICACIONES DE DATOS
 
+REDES Y COMUNICACIONES DE DATOS
 
 ## 1. SEGURIDAD BÁSICA
 
 Esta es la configuración de seguridad básica para los dispositivos de red como los **switches** y **los routers**.
 
 `Switch>`
-```
+
+```kotlin
 enable
 configure terminal
 hostname S1
@@ -26,13 +27,13 @@ do write memory
 do copy run start
 ```
 
-
 ## 2. ROUTER: SUBINTERFACES
 
 Habilitar la *interfaz* del **router** que se conecte con el **switch**
 
 `Router(config)#`
-```
+
+```kotlin
 interface G0/0
 no shutdown
 ```
@@ -45,21 +46,24 @@ Habilitar las *subinterfaces* de las **VLANs** para que tenga *enlace troncal* c
 `Router(config)#`
 
 * VLAN 10 *(Marketing)*
-```
+
+```kotlin
 interface G0/0.10
 encapsulation dot1Q 10
 ip address 192.168.10.1 255.255.255.0
 ```
 
 * VLAN 20 *(Ventas)*
-```
+
+```kotlin
 interface G0/0.20
 encapsulation dot1Q 20
 ip address 192.168.20.1 255.255.255.0
 ```
 
 * VLAN 99 *(Management & Native)*
-```
+
+```kotlin
 interface G0/0.99
 encapsulation dot1Q 99
 ip address 192.168.99.1 255.255.255.0
@@ -71,7 +75,7 @@ Si se usa un **switch multicapa** se puede obviar la configuración del router, 
 
 `MLS(config)#`
 
-```
+```kotlin
 ip routing
 VLAN 10
 name MKT
@@ -89,13 +93,13 @@ switchport trunk encapsulation dot1q
 
 [Más Información](https://www.comparitech.com/net-admin/inter-vlan-routing-configuration/)
 
-
 ## 3. SWITCH: VLANS
 
 Habilitar las **VLANs** en los **switches** y asignarles un nombre.
 
 `Switch(config)#`
-```
+
+```kotlin
 VLAN 10
 name MKT
 VLAN 20
@@ -103,7 +107,6 @@ name VTAS
 VLAN 99
 name Management&Native
 ```
-
 
 ## 4. SWITCH: PUERTOS VLANS
 
@@ -114,19 +117,20 @@ Habilitar las **interfaces (puertos)** donde se conectarán los **dispositivos f
 `Switch(config)#`
 
 * VLAN 10
-```
+
+```kotlin
 interface range f0/2, f0/4, f0/6, f0/8, f0/10
 switchport mode access
 switchport access vlan 10
 ```
 
 * VLAN 20
-```
+
+```kotlin
 interface range f0/3, f0/5, f0/7, f0/9, f0/11
 switchport mode access
 switchport access vlan 20
 ```
-
 
 ## 5. SWITCH: TRUNKING
 
@@ -138,26 +142,28 @@ Habilitar las **interfaces (puertos)** donde se conectarán otros **dispositivos
 `Switch(config)#`
 
 * Switch 1
-```
+
+```kotlin
 interface range G0/1, f0/1-2
 switchport mode trunk
 switchport trunk native vlan 99
 ```
 
 * Switch 2
-```
+
+```kotlin
 interface f0/1
 switchport mode trunk
 switchport trunk native vlan 99
 ```
 
 * Switch 3
-```
+
+```kotlin
 interface f0/1
 switchport mode trunk
 switchport trunk native vlan 99
 ```
-
 
 ## 6. SWITCH: SVI
 
@@ -169,7 +175,8 @@ Habilitar las **interfaces virtuales** de las **VLANs** y asignarles una direcci
 `Switch(config)#`
 
 * Switch 1
-```
+
+```kotlin
 interface vlan 99
 ip address 192.168.99.11 255.255.255.0
 exit
@@ -177,7 +184,8 @@ ip default-gateway 192.168.99.1
 ```
 
 * Switch 2
-```
+
+```kotlin
 interface vlan 99
 ip address 192.168.99.12 255.255.255.0
 exit
@@ -185,13 +193,13 @@ ip default-gateway 192.168.99.1
 ```
 
 * Switch 3
-```
+
+```kotlin
 interface vlan 99
 ip address 192.168.99.13 255.255.255.0
 exit
 ip default-gateway 192.168.99.1
 ```
-
 
 ## 7. ROUTER: DHCP
 
@@ -200,7 +208,8 @@ Se puede habilitar el servicio de aginación automática de IPs **DHCP** en el *
 `Router(config)#`
 
 * VLAN 10
-```
+
+```kotlin
 ip dhcp excluded-address 192.168.10.1 192.168.10.50
 ip dhcp pool POOL-VLAN10
 network 192.168.10.0 255.255.255.0
@@ -209,14 +218,13 @@ dns-server 192.168.1.254
 ```
 
 * VLAN 20
-```
+
+```kotlin
 ip dhcp excluded-address 192.168.20.1 192.168.20.50
 ip dhcp pool POOL-VLAN20
 network 192.168.20.0 255.255.255.0
 default-router 192.168.20.1
 dns-server 192.168.1.254
 ```
-
-
 
 Creado por [Alvaro @2023](https://github.com/Haisha10)
