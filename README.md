@@ -84,6 +84,12 @@ name VTAS
 VLAN 99
 name Management&Native
 exit
+interface Vlan10
+ip address 192.168.10.1 255.255.255.0
+interface Vlan20
+ip address 192.168.20.1 255.255.255.0
+interface Vlan99
+ip address 192.168.99.1 255.255.255.0
 interface G1/0/11
 switchport mode trunk
 switchport trunk native vlan 99
