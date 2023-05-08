@@ -65,7 +65,7 @@ ip address 192.168.20.1 255.255.255.0
 
 ```kotlin
 interface G0/0.99
-encapsulation dot1Q 99
+encapsulation dot1Q 99 native
 ip address 192.168.99.1 255.255.255.0
 ```
 
